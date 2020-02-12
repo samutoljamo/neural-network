@@ -6,18 +6,24 @@ namespace NeuralNetwork
 {
     public class Layer
     {
-        public enum Activation {Sigmoid, Relu}
+        public enum Activation {Sigmoid, Relu, Linear}
         private float[] _neurons;
         private float[,] _weights;
+        private float[] _biases;
         private Activation _activation;
-        public Layer(int neurons, int next_neurons, Activation activation = Activation.Sigmoid)
+        public Layer(int previous_neurons, int neurons, Activation activation = Activation.Linear)
         {
             _neurons = new float[neurons];
-            _weights = new float[neurons, next_neurons];
+            _weights = new float[previous_neurons, neurons];
+            _biases = new float[previous_neurons == 0 ? 0 : neurons];
             _activation = activation;
         }
+        public int Length()
+        {
+            return _weights.Length == 0 ? 0 : _weights.Length + _biases.Length;
+        }
 
-        public void IniatilizeWeights()
+        public void Iniatilize()
         {
             Random rand = new Random();
             for (int i = 0; i < _weights.GetLength(0); i++)
@@ -27,31 +33,69 @@ namespace NeuralNetwork
                     _weights[i, j] = (float)(rand.NextDouble()) * 4 - 2;
                 }
             }
+            for (int i = 0; i < _biases.Length; i++)
+            {
+                 _biases[i] = (float)(rand.NextDouble()) * 4 - 2;
+            }
+        }
+        public float[] GetGenes()
+        {
+            if(_weights.Length == 0)
+            {
+                return new float[0];
+            }
+            float[] res = new float[_weights.Length + _biases.Length];
+            for (int i = 0; i < _weights.GetLength(0); i++)
+            {
+                for (int j = 0; j < _weights.GetLength(1); j++)
+                {
+                    res[i * _weights.GetLength(1) + j] = _weights[i, j];
+                }
+            }
+            for (int i = 0; i < _biases.Length; i++)
+            {
+                res[_weights.Length + i] = _biases[i];
+            }
+            return res;
+        }
+
+        public void SetGenes(float[] genes)
+        {
+            for (int i = 0; i < _weights.GetLength(0); i++)
+            {
+                for (int j = 0; j < _weights.GetLength(1); j++)
+                {
+                    _weights[i, j] = genes[i * _weights.GetLength(1) + j];
+                }
+            }
+
+            for (int i = 0; i < _biases.Length; i++)
+            {
+                _biases[i] = genes[_weights.Length + i];
+            }
         }
 
         public float[] Predict(float[] input)
         {
-
-            if (input.Length != _neurons.Length)
+            if (_weights.Length == 0)
             {
-                throw new ArgumentException();
+                _neurons = input;
+                return input;
             }
-            if (_weights.GetLength(1) == 0)
-            {
-                return ActivateLayer(input, _activation);
-            }
-            _neurons = input;
-            float[] res = new float[_weights.GetLength(1)];
             for (int i = 0; i < _weights.GetLength(0); i++)
             {
                 float inputVal = input[i];
                 for (int j = 0; j < _weights.GetLength(1); j++)
                 {
-                    res[j] += inputVal * _weights[i, j];
+                    _neurons[j] += inputVal * _weights[i, j];
                 }
             }
-            res = ActivateLayer(res, _activation);
-            return res;
+            for (int i = 0; i < _biases.Length; i++)
+            {
+                _neurons[i] += _biases[i];
+            }
+            _neurons = ActivateLayer(_neurons, _activation);
+            return _neurons;
         }
         public static float[] ActivateLayer(float[] input, Activation activation)
         {
@@ -64,6 +108,11 @@ namespace NeuralNetwork
             if (activation == Activation.Relu)
             {
                 activationFunc = Activate.Relu;
+
+            }
+            if (activation == Activation.Linear)
+            {
+                activationFunc = Activate.Linear;
 
             }
             return activationFunc(input);

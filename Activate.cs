@@ -10,7 +10,6 @@ namespace NeuralNetwork
     {
         public static float[] Sigmoid(float[] input)
         {
-
             for (int i = 0; i < input.Count(); i++)
             {
                 input[i] =  1 / ( 1 + (float)Math.Exp(-input[i]));
@@ -27,6 +26,10 @@ namespace NeuralNetwork
                     input[i] = 0;
                 }
             }
+            return input;
+        }
+        public static float[] Linear(float[] input)
+        { 
             return input;
         }
     }
