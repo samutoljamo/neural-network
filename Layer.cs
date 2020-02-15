@@ -6,23 +6,31 @@ namespace NeuralNetwork
 {
     public class Layer
     {
+       
         public enum Activation {Sigmoid, Relu, Linear}
         private float[] _neurons;
         private float[,] _weights;
         private float[] _biases;
         private Activation _activation;
-        public Layer(int previous_neurons, int neurons, Activation activation = Activation.Linear)
+        private float[] minMax;
+        public static Func<float, float, float> randomFunction;
+        public Layer(int previous_neurons, int neurons, float[] minMax, Activation activation = Activation.Linear, Func<float, float, float> randomFunc = null)
         {
             _neurons = new float[neurons];
             _weights = new float[previous_neurons, neurons];
             _biases = new float[previous_neurons == 0 ? 0 : neurons];
             _activation = activation;
+            this.minMax = minMax;
+            randomFunction = randomFunc;
+            if (randomFunction == null)
+            {
+                randomFunction = Randomf;
+            }
         }
         public int Length()
         {
             return _weights.Length == 0 ? 0 : _weights.Length + _biases.Length;
         }
-
         public void Iniatilize()
         {
             Random rand = new Random();
@@ -30,12 +38,12 @@ namespace NeuralNetwork
             {
                 for (int j = 0; j < _weights.GetLength(1); j++)
                 {
-                    _weights[i, j] = (float)(rand.NextDouble()) * 4 - 2;
+                    _weights[i, j] = randomFunction(minMax[0], minMax[1]);
                 }
             }
             for (int i = 0; i < _biases.Length; i++)
             {
-                 _biases[i] = (float)(rand.NextDouble()) * 4 - 2;
+                 _biases[i] = randomFunction(minMax[2], minMax[3]);
             }
         }
         public float[] GetGenes()
@@ -116,6 +124,11 @@ namespace NeuralNetwork
 
             }
             return activationFunc(input);
+        }
+        public static float Randomf(float min, float max)
+        {
+            Random random = new Random();
+            return (float)(random.NextDouble()) * (max - min) + min;
         }
     }
 }

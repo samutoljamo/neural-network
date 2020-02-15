@@ -9,12 +9,23 @@ namespace NeuralNetwork
 {
     public class NeuralNetwork
     {
-        private List<Layer> layers = new List<Layer>();
-        private List<Tuple<int, Layer.Activation>> layerData = new List<Tuple<int, Layer.Activation>>();
-        private int _genes;
-        public void AddLayer(int neurons, Layer.Activation activation = Layer.Activation.Linear)
+        Func<float, float, float> randomFunction;
+        public NeuralNetwork(Func<float, float, float> randomFunc = null)
         {
-            var data = new Tuple<int, Layer.Activation>(neurons, activation);
+            randomFunction = randomFunc;
+        }
+        private List<Layer> layers = new List<Layer>();
+        private List<Tuple<int, Layer.Activation, float[]>> layerData = new List<Tuple<int, Layer.Activation, float[]>>();
+        private int _genes;
+        public void AddLayer(int neurons, Layer.Activation activation = Layer.Activation.Linear, float minWeight = -2f, float maxWeight = 2f, float minBias = -2f, float maxBias = 2f)
+        {
+            float[] minMax = new float[4];
+            minMax[0] = minWeight;
+            minMax[1] = maxWeight;
+            minMax[2] = minBias;
+            minMax[3] = maxBias;
+
+            var data = new Tuple<int, Layer.Activation, float[]>(neurons, activation, minMax);
             layerData.Add(data);
         }
         public void Compile()
@@ -23,7 +34,7 @@ namespace NeuralNetwork
             for(int i = 0; i < layerData.Count; i++)
             {
                 var data = layerData[i];
-                Layer layer = new Layer((i == 0 ? 0 : layerData[i - 1].Item1), data.Item1, data.Item2);
+                Layer layer = new Layer((i == 0 ? 0 : layerData[i - 1].Item1), data.Item1, data.Item3, data.Item2, randomFunction);
                 layer.Iniatilize();
                 layers.Add(layer);
                 if (i != 0)
