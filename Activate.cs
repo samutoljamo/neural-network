@@ -32,5 +32,15 @@ namespace NeuralNetwork
         { 
             return input;
         }
+
+        public static float[] Tanh(float[] input)
+        {
+
+            for (int i = 0; i < input.Count(); i++)
+            {
+                input[i] = ((float)Math.Exp(input[i]) - (float)Math.Exp(-input[i])) / ((float)Math.Exp(input[i]) + (float)Math.Exp(-input[i]));
+            }
+            return input;
+        }
     }
 }

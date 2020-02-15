@@ -7,7 +7,7 @@ namespace NeuralNetwork
     public class Layer
     {
        
-        public enum Activation {Sigmoid, Relu, Linear}
+        public enum Activation {Sigmoid, Relu, Linear, Tanh}
         private float[] _neurons;
         private float[,] _weights;
         private float[] _biases;
@@ -121,6 +121,12 @@ namespace NeuralNetwork
             if (activation == Activation.Linear)
             {
                 activationFunc = Activate.Linear;
+
+            }
+
+            if (activation == Activation.Tanh)
+            {
+                activationFunc = Activate.Tanh;
 
             }
             return activationFunc(input);
