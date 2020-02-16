@@ -38,7 +38,19 @@ namespace NeuralNetwork
 
             for (int i = 0; i < input.Count(); i++)
             {
+                float num = input[i];
                 input[i] = ((float)Math.Exp(input[i]) - (float)Math.Exp(-input[i])) / ((float)Math.Exp(input[i]) + (float)Math.Exp(-input[i]));
+                if (input[i] != input[i])
+                {
+                    if (num > 0)
+                    {
+                        input[i] = 1;
+                    }
+                    else
+                    {
+                        input[i] = -1;
+                    }
+                }
             }
             return input;
         }
