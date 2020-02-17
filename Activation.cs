@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
-    class Activate
+    public class Activation
     {
         public static float[] Sigmoid(float[] input)
         {

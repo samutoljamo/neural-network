@@ -6,20 +6,18 @@ namespace NeuralNetwork
 {
     public class Layer
     {
-       
-        public enum Activation {Sigmoid, Relu, Linear, Tanh}
         private float[] _neurons;
         private float[,] _weights;
         private float[] _biases;
-        private Activation _activation;
+        private Func<float[], float[]> _activation;
         private float[] minMax;
         public static Func<float, float, float> randomFunction;
-        public Layer(int previous_neurons, int neurons, float[] minMax, Activation activation = Activation.Linear, Func<float, float, float> randomFunc = null)
+        public Layer(int previous_neurons, int neurons, float[] minMax, Func<float[], float[]> activation = null, Func<float, float, float> randomFunc = null)
         {
             _neurons = new float[neurons];
             _weights = new float[previous_neurons, neurons];
             _biases = new float[previous_neurons == 0 ? 0 : neurons];
-            _activation = activation;
+            _activation = activation == null ? Activation.Linear : activation;
             this.minMax = minMax;
             randomFunction = randomFunc;
             if (randomFunction == null)
@@ -102,34 +100,8 @@ namespace NeuralNetwork
             {
                 _neurons[i] += _biases[i];
             }
-            _neurons = ActivateLayer(_neurons, _activation);
+            _neurons =  _activation(_neurons);
             return _neurons;
-        }
-        public static float[] ActivateLayer(float[] input, Activation activation)
-        {
-            Func<float[], float[]> activationFunc = null;
-            if (activation == Activation.Sigmoid)
-            {
-                activationFunc = Activate.Sigmoid;
-
-            }
-            if (activation == Activation.Relu)
-            {
-                activationFunc = Activate.Relu;
-
-            }
-            if (activation == Activation.Linear)
-            {
-                activationFunc = Activate.Linear;
-
-            }
-
-            if (activation == Activation.Tanh)
-            {
-                activationFunc = Activate.Tanh;
-
-            }
-            return activationFunc(input);
         }
         public static float Randomf(float min, float max)
         {

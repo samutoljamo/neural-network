@@ -15,9 +15,9 @@ namespace NeuralNetwork
             randomFunction = randomFunc;
         }
         private List<Layer> layers = new List<Layer>();
-        private List<Tuple<int, Layer.Activation, float[]>> layerData = new List<Tuple<int, Layer.Activation, float[]>>();
+        private List<Tuple<int, Func<float[], float[]>, float[]>> layerData = new List<Tuple<int, Func<float[], float[]>, float[]>>();
         private int _genes;
-        public void AddLayer(int neurons, Layer.Activation activation = Layer.Activation.Linear, float minWeight = -2f, float maxWeight = 2f, float minBias = -2f, float maxBias = 2f)
+        public void AddLayer(int neurons, Func<float[], float[]> activation = null, float minWeight = -2f, float maxWeight = 2f, float minBias = -2f, float maxBias = 2f)
         {
             float[] minMax = new float[4];
             minMax[0] = minWeight;
@@ -25,7 +25,7 @@ namespace NeuralNetwork
             minMax[2] = minBias;
             minMax[3] = maxBias;
 
-            var data = new Tuple<int, Layer.Activation, float[]>(neurons, activation, minMax);
+            var data = new Tuple<int, Func<float[], float[]>, float[]>(neurons, activation, minMax);
             layerData.Add(data);
         }
         public void Compile()
