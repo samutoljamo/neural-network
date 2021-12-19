@@ -29,7 +29,7 @@ namespace NeuralNetwork
         {
             return _weights.Length == 0 ? 0 : _weights.Length + _biases.Length;
         }
-        public void Iniatilize()
+        public void Initialize()
         {
             Random rand = new Random();
             for (int i = 0; i < _weights.GetLength(0); i++)

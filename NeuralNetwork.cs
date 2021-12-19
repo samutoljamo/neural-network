@@ -35,7 +35,7 @@ namespace NeuralNetwork
             {
                 var data = layerData[i];
                 Layer layer = new Layer((i == 0 ? 0 : layerData[i - 1].Item1), data.Item1, data.Item3, data.Item2, randomFunction);
-                layer.Iniatilize();
+                layer.Initialize();
                 layers.Add(layer);
                 if (i != 0)
                 {
